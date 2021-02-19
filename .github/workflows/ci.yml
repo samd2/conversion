@@ -131,6 +131,13 @@ jobs:
           sudo -E DEBIAN_FRONTEND=noninteractive apt-get -o Acquire::Retries=3 -y --no-install-suggests --no-install-recommends install ${PACKAGES}
 
           echo "done with linux-cxx-install.sh"
+          echo "DEBUGGING"
+          which llvm-cov || true
+          echo $PATH
+          apt-get install -y mlocate
+          updatedb
+          locate llvm-cov || true
+
           echo "After package removal and install"
           dpkg -l
           echo "Checking /usr/local"
@@ -211,7 +218,7 @@ jobs:
           echo $OTHER_LIBS
           eval "$LCOV --remove $TRAVIS_BUILD_DIR/coverals/coverage.info $OTHER_LIBS -o $TRAVIS_BUILD_DIR/coverals/coverage.info"
           cd $TRAVIS_BUILD_DIR
-          gem install coveralls-lcov
+          sudo gem install coveralls-lcov || echo "ERROR. Failed to install coveralls-lcov"
           coveralls-lcov coverals/coverage.info
 
           fi
