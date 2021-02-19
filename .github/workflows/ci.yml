@@ -134,8 +134,8 @@ jobs:
           echo "DEBUGGING"
           which llvm-cov || true
           echo $PATH
-          apt-get install -y mlocate
-          updatedb
+          sudo apt-get install -y mlocate
+          sudo updatedb
           locate llvm-cov || true
 
           echo "After package removal and install"
