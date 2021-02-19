@@ -208,7 +208,7 @@ jobs:
           unzip v1.14.zip
           LCOV="`pwd`/lcov-1.14/bin/lcov --gcov-tool $GCOVTOOL"
           mkdir -p ~/.local/bin
-          echo -e '#!/bin/bash\nexec llvm-cov gcov "$@"' > ~/.local/bin/gcov_for_clang.sh
+          echo -e '#!/bin/bash\nexec /usr/bin/llvm-cov-9 gcov "$@"' > ~/.local/bin/gcov_for_clang.sh
           chmod 755 ~/.local/bin/gcov_for_clang.sh
           echo "$LCOV --directory $TRAVIS_BUILD_DIR/coverals --base-directory `pwd` --capture --output-file $TRAVIS_BUILD_DIR/coverals/coverage.info"
           $LCOV --directory $TRAVIS_BUILD_DIR/coverals --base-directory `pwd` --capture --output-file $TRAVIS_BUILD_DIR/coverals/coverage.info
