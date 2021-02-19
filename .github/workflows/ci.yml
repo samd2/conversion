@@ -89,7 +89,7 @@ jobs:
           TRAVIS_OS_NAME: "linux"
         run: |
           echo '==================================> SETUP'
-          BOOST_CI_ORG=boostorg BOOST_CI_BRANCH=master && wget https://github.com/$BOOST_CI_ORG/boost-ci/archive/$BOOST_CI_BRANCH.tar.gz && tar -xvf $BOOST_CI_BRANCH.tar.gz && mkdir -p .github &&  mv boost-ci-$BOOST_CI_BRANCH .github/boost-ci
+          # BOOST_CI_ORG=boostorg BOOST_CI_BRANCH=master && wget https://github.com/$BOOST_CI_ORG/boost-ci/archive/$BOOST_CI_BRANCH.tar.gz && tar -xvf $BOOST_CI_BRANCH.tar.gz && mkdir -p .github &&  mv boost-ci-$BOOST_CI_BRANCH .github/boost-ci
           echo '==================================> PACKAGES'
           set -ex
           echo "Before package removal or install"
@@ -104,6 +104,7 @@ jobs:
           ls -al /usr/bin/c*
           echo "about to run sudo apt-get purge -y $PACKAGES_TO_REMOVE"
           if [ -n "$PACKAGES_TO_REMOVE" ]; then sudo apt-get purge -y $PACKAGES_TO_REMOVE; fi
+          ln -s /usr/bin/llvm-cov-9 /usr/bin/llvm-cov
           echo "about to run the equivalent of linux-cxx-install.sh"
 
           set -ex
@@ -131,13 +132,6 @@ jobs:
           sudo -E DEBIAN_FRONTEND=noninteractive apt-get -o Acquire::Retries=3 -y --no-install-suggests --no-install-recommends install ${PACKAGES}
 
           echo "done with linux-cxx-install.sh"
-          echo "DEBUGGING"
-          which llvm-cov || true
-          echo $PATH
-          sudo apt-get install -y mlocate
-          sudo updatedb
-          locate llvm-cov || true
-
           echo "After package removal and install"
           dpkg -l
           echo "Checking /usr/local"
@@ -208,7 +202,7 @@ jobs:
           unzip v1.14.zip
           LCOV="`pwd`/lcov-1.14/bin/lcov --gcov-tool $GCOVTOOL"
           mkdir -p ~/.local/bin
-          echo -e '#!/bin/bash\nexec /usr/bin/llvm-cov-9 gcov "$@"' > ~/.local/bin/gcov_for_clang.sh
+          echo -e '#!/bin/bash\nexec llvm-cov gcov "$@"' > ~/.local/bin/gcov_for_clang.sh
           chmod 755 ~/.local/bin/gcov_for_clang.sh
           echo "$LCOV --directory $TRAVIS_BUILD_DIR/coverals --base-directory `pwd` --capture --output-file $TRAVIS_BUILD_DIR/coverals/coverage.info"
           $LCOV --directory $TRAVIS_BUILD_DIR/coverals --base-directory `pwd` --capture --output-file $TRAVIS_BUILD_DIR/coverals/coverage.info
